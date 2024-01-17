@@ -11,8 +11,8 @@ def get_line_coverage_percentage(jacoco_xml_file):
     covered_lines = 0
     missed_lines = 0
     for count in counters:
-        covered_lines = covered_lines + int(counters[0].get("covered"))
-        missed_lines = missed_lines + int(counters[0].get("missed"))
+        covered_lines = covered_lines + int(count.get("covered"))
+        missed_lines = missed_lines + int(count.get("missed"))
     print(f"Number of covered_lines {covered_lines}")
     print(f"Number of missed_lines {missed_lines}")
     # Calculate line coverage percentage
