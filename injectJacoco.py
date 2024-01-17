@@ -34,18 +34,16 @@ def add_jacoco_configuration(pom_file):
     # Find or create the build section
     build = root.find(".//{}build".format(namespace))
     if build is None:
-        print("Did not find build tag")
         build = ET.Element("{}build".format(namespace))
         root.append(build)
 
     # Find or create the plugins section within the build section
     plugins = build.find(".//{}plugins".format(namespace))
     if plugins is None:
-        print("Did not find plugins tag")
         plugins = ET.SubElement(build, "{}plugins".format(namespace))
 
     # Check if JaCoCo plugin already exists
-    existing_jacoco = plugins.find(".//{}artifactId[text()='jacoco-maven-plugin']".format(namespace))
+    existing_jacoco = plugins.find(".//{}artifactId[.='jacoco-maven-plugin']".format(namespace))
     if existing_jacoco is not None:
         print("JaCoCo plugin configuration already exists in the pom.xml.")
         sys.exit(0)
