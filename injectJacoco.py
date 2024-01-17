@@ -24,49 +24,58 @@ def remove_ns0_from_file(file_path):
         print(f'An error occurred: {str(e)}')
         
 def add_jacoco_configuration(pom_file):
-    # Load the XML file
+    # Load the XML file with namespace information
     tree = ET.parse(pom_file)
     root = tree.getroot()
 
-    # Check if the build section exists
-    build = root.find("build")
+    # Extract namespace information
+    namespace = root.tag.split('}')[0] + '}'
+
+    # Find or create the build section
+    build = root.find(".//{}build".format(namespace))
     if build is None:
-        # If not, create the build section
-        build = ET.Element("build")
+        print("Did not find build tag")
+        build = ET.Element("{}build".format(namespace))
         root.append(build)
 
-    # Check if the plugins section exists within the build section
-    plugins = build.find("plugins")
+    # Find or create the plugins section within the build section
+    plugins = build.find(".//{}plugins".format(namespace))
     if plugins is None:
-        # If not, create the plugins section within the build section
-        plugins = ET.SubElement(build, "plugins")
+        print("Did not find plugins tag")
+        plugins = ET.SubElement(build, "{}plugins".format(namespace))
+
+    # Check if JaCoCo plugin already exists
+    existing_jacoco = plugins.find(".//{}artifactId[text()='jacoco-maven-plugin']".format(namespace))
+    if existing_jacoco is not None:
+        print("JaCoCo plugin configuration already exists in the pom.xml.")
+        sys.exit(0)
 
     # Define JaCoCo plugin configuration
-    jacoco_plugin = ET.Element("plugin")
-    jacoco_plugin_groupId = ET.SubElement(jacoco_plugin, "groupId")
+    jacoco_plugin = ET.Element("{}plugin".format(namespace))
+    jacoco_plugin_groupId = ET.SubElement(jacoco_plugin, "{}groupId".format(namespace))
     jacoco_plugin_groupId.text = "org.jacoco"
-    jacoco_plugin_artifactId = ET.SubElement(jacoco_plugin, "artifactId")
+    jacoco_plugin_artifactId = ET.SubElement(jacoco_plugin, "{}artifactId".format(namespace))
     jacoco_plugin_artifactId.text = "jacoco-maven-plugin"
-    jacoco_plugin_version = ET.SubElement(jacoco_plugin, "version")
+    jacoco_plugin_version = ET.SubElement(jacoco_plugin, "{}version".format(namespace))
     jacoco_plugin_version.text = "0.8.7"  # Use the latest version
 
     # Add executions element
-    executions = ET.SubElement(jacoco_plugin, "executions")
+    executions = ET.SubElement(jacoco_plugin, "{}executions".format(namespace))
 
     # Add prepare-agent goal
-    prepare_agent_execution = ET.SubElement(executions, "execution")
-    prepare_agent_goals = ET.SubElement(prepare_agent_execution, "goals")
-    prepare_agent_goal = ET.SubElement(prepare_agent_goals, "goal")
+    prepare_agent_execution = ET.SubElement(executions, "{}execution".format(namespace))
+    prepare_agent_goals = ET.SubElement(prepare_agent_execution, "{}goals".format(namespace))
+    prepare_agent_goal = ET.SubElement(prepare_agent_goals, "{}goal".format(namespace))
     prepare_agent_goal.text = "prepare-agent"
 
     # Add report goal
-    report_execution = ET.SubElement(executions, "execution")
-    report_execution_id = ET.SubElement(report_execution, "id")
+    report_execution = ET.SubElement(executions, "{}execution".format(namespace))
+    report_execution_id = ET.SubElement(report_execution, "{}id".format(namespace))
     report_execution_id.text = "report"
-    report_execution_phase = ET.SubElement(report_execution, "phase")
+    report_execution_phase = ET.SubElement(report_execution, "{}phase".format(namespace))
     report_execution_phase.text = "test"
-    report_goals = ET.SubElement(report_execution, "goals")
-    report_goal = ET.SubElement(report_goals, "goal")
+    report_goals = ET.SubElement(report_execution, "{}goals".format(namespace))
+    report_goal = ET.SubElement(report_goals, "{}goal".format(namespace))
     report_goal.text = "report"
 
     # Add JaCoCo plugin configuration to the plugins section
