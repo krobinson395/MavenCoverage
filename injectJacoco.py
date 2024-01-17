@@ -1,6 +1,28 @@
 import sys
 import xml.etree.ElementTree as ET
 
+
+def remove_ns0_from_file(file_path):
+    try:
+        # Read the content of the file
+        with open(file_path, 'r') as file:
+            content = file.read()
+
+        # Remove all occurrences of 'ns0:'
+        modified_content = content.replace('ns0:', '')
+
+        # Write the modified content back to the file
+        with open(file_path, 'w') as file:
+            file.write(modified_content)
+
+        print(f'Successfully removed "ns0:" from {file_path}')
+
+    except FileNotFoundError:
+        print(f'Error: File not found - {file_path}')
+
+    except Exception as e:
+        print(f'An error occurred: {str(e)}')
+        
 def add_jacoco_configuration(pom_file):
     # Load the XML file
     tree = ET.parse(pom_file)
@@ -76,5 +98,5 @@ if __name__ == "__main__":
     add_jacoco_configuration(pom_file_path)
     print(f"JaCoCo configuration added to {pom_file_path}")
 
-    remove_ns0_from_xml(pom_file_path)
+    remove_ns0_from_file(pom_file_path)
     print(f"Removed 'ns0' occurrences from {pom_file_path}")
