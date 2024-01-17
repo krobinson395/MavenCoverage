@@ -14,7 +14,7 @@ def run_inject_jacoco():
 def run_maven_tests(url):
     os.chdir("gitDir")
     try:
-        subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true'], check=True)
+        subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true', '-Drat.failOnError=false'], check=True)
     except subprocess.CalledProcessError:
         # Call cleanup function on error
         cleanup_on_fail(url)
@@ -28,7 +28,7 @@ def run_summarize_coverage():
 
 def cleanup_on_fail(url):
     with open("ErrorReport.txt", 'a') as file:
-        file.write(f"There was an error with {url}")
+        file.write(f"There was an error with {url}\n")
     cleanup()
     
 def cleanup():
