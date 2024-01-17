@@ -59,11 +59,13 @@ def add_jacoco_configuration(pom_file):
     # Find the build section or create one if it doesn't exist
     build = root.find(".//build")
     if build is None:
+        print("Could not find build section")
         build = ET.SubElement(root, "build")
 
     # Find the plugins section or create one if it doesn't exist
     plugins = build.find(".//plugins")
     if plugins is None:
+        print("Could not find plugins section")
         plugins = ET.SubElement(build, "plugins")
 
     # Add JaCoCo plugin configuration to the plugins section
