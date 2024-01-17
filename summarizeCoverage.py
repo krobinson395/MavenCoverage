@@ -28,5 +28,5 @@ if __name__ == "__main__":
     jacoco_xml_path = sys.argv[1] + "target/site/jacoco/jacoco.xml"# Replace with the actual path to your jacoco.xml
     line_coverage_percentage = get_line_coverage_percentage(jacoco_xml_path)
     with open("CovReport.txt", 'a') as file:
-        file.write(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%")
+        file.write(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%\n")
     print(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%")
