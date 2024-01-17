@@ -1,18 +1,20 @@
-import xml.etree.ElementTree as ET
 import sys
+import xml.etree.ElementTree as ET
+
 def add_jacoco_configuration(pom_file):
-    # Load the XML file
+    # Load the XML file with namespace awareness
     tree = ET.parse(pom_file)
     root = tree.getroot()
 
-    # Define JaCoCo plugin configuration
-    jacoco_plugin = ET.Element("plugin")
+    # Define JaCoCo plugin configuration without a namespace prefix
+    ns = {'': 'http://maven.apache.org/POM/4.0.0'}
+    jacoco_plugin = ET.Element("plugin", nsmap=ns)
     jacoco_plugin_groupId = ET.SubElement(jacoco_plugin, "groupId")
     jacoco_plugin_groupId.text = "org.jacoco"
     jacoco_plugin_artifactId = ET.SubElement(jacoco_plugin, "artifactId")
     jacoco_plugin_artifactId.text = "jacoco-maven-plugin"
     jacoco_plugin_version = ET.SubElement(jacoco_plugin, "version")
-    jacoco_plugin_version.text = "0.8.11"  # Use the latest version
+    jacoco_plugin_version.text = "0.8.7"  # Use the latest version
 
     # Add executions element
     executions = ET.SubElement(jacoco_plugin, "executions")
@@ -34,12 +36,14 @@ def add_jacoco_configuration(pom_file):
     report_goal.text = "report"
 
     # Find the build section or create one if it doesn't exist
-    build = root.find(".//build")
+    build = root.find(".//build", ns)
+
     if build is None:
         build = ET.SubElement(root, "build")
 
     # Find the plugins section or create one if it doesn't exist
-    plugins = build.find(".//plugins")
+    plugins = build.find(".//plugins", ns)
+
     if plugins is None:
         plugins = ET.SubElement(build, "plugins")
 
