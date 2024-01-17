@@ -110,5 +110,3 @@ if __name__ == "__main__":
     add_jacoco_configuration(pom_file_path)
     print(f"JaCoCo configuration added to {pom_file_path}")
 
-    remove_ns0_from_file(pom_file_path)
-    print(f"Removed 'ns0' occurrences from {pom_file_path}")
