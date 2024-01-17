@@ -23,22 +23,7 @@ def remove_ns0_from_file(file_path):
     except Exception as e:
         print(f'An error occurred: {str(e)}')
 
-def get_line_coverage_percentage(jacoco_xml_file):
-    tree = ET.parse(jacoco_xml_file)
-    root = tree.getroot()
 
-    # Find the counter elements for lines
-    counters = root.findall(".//counter[@type='LINE']")
-
-    # Extract covered and missed line counts
-    covered_lines = int(counters[0].get("covered"))
-    missed_lines = int(counters[0].get("missed"))
-
-    # Calculate line coverage percentage
-    total_lines = covered_lines + missed_lines
-    line_coverage_percentage = (covered_lines / total_lines) * 100 if total_lines > 0 else 100
-
-    return line_coverage_percentage
         
 def add_jacoco_configuration(pom_file):
     # Load the XML file with namespace information
@@ -118,17 +103,12 @@ def remove_ns0_from_xml(pom_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python script.py path/to/root")
+        print("Usage: python script.py path/to/pom.xml")
         sys.exit(1)
 
-    root_file_path = sys.argv[1]
-    pom_file_path = root_file_path + "/pom.xml"
-    jacoco_file_path = root_file_path + "/target/site/jacoco/jacoco.xml"
+    pom_file_path = sys.argv[1]
     add_jacoco_configuration(pom_file_path)
     print(f"JaCoCo configuration added to {pom_file_path}")
 
     remove_ns0_from_file(pom_file_path)
     print(f"Removed 'ns0' occurrences from {pom_file_path}")
-    line_coverage_percentage = get_line_coverage_percentage(jacoco_file_path)
-
-    print(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%")
