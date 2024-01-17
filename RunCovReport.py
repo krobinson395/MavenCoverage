@@ -11,14 +11,28 @@ def run_inject_jacoco():
     subprocess.run(['python3', 'injectJacoco.py', './gitDir/pom.xml'])
 
 # Function to run sudo mvn clean test -Dmaven.test.failure.ignore=true
-def run_maven_tests():
+def run_maven_tests(url):
     os.chdir("gitDir")
-    subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true'])
-    os.chdir("..")
+    try:
+        subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true'], check=True)
+    except subprocess.CalledProcessError:
+        # Call cleanup function on error
+        cleanup_on_fail(url)
+        raise
+    finally:
+        # Change back to the original working directory
+        os.chdir('..')
 # Function to run summarizeCoverage.py
 def run_summarize_coverage():
     subprocess.run(['python3', 'summarizeCoverage.py', './gitDir/'])
 
+def cleanup_on_fail(url):
+    with open("ErrorReport.txt", 'a') as file:
+        file.write(f"There was an error with {url}")
+    cleanup()
+    
+def cleanup():
+    subprocess.run(['sudo', 'rm', '-rf', 'gitDir'])
 # Read X (number of URLs) from command line arguments
 if len(sys.argv) != 3:
     print("Usage: python script.py X inputFile")
@@ -38,7 +52,11 @@ with open(input_file, 'r') as file:
 
 # Perform actions for each URL up to the first X
 for url in urls[:x]:
-    clone_repository(url)
-    run_inject_jacoco()
-    run_maven_tests()
-    run_summarize_coverage()
+    try:
+        clone_repository(url)
+        run_inject_jacoco()
+        run_maven_tests(url)
+        run_summarize_coverage()
+        cleanup()
+    except Exception as e:
+        cleanup_on_fail(url)
