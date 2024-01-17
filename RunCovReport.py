@@ -52,6 +52,9 @@ with open(input_file, 'r') as file:
 
 # Perform actions for each URL up to the first X
 for url in urls[:x]:
+    with open("CovLog.txt","a") as file:
+        file.write(f"Looking at {url}\n")
+    print(f"LOOKING AT {url}\n")
     try:
         clone_repository(url)
         run_inject_jacoco()
