@@ -38,6 +38,9 @@ def getTopURLS():
     
 if __name__ == "__main__":
     github_urls = getTopURLS()
-    for url in github_urls:
-        print(f"Current URL: {url}")
     print(f"Total URLS {len(github_urls)}")
+    file_path = 'PackageUrls.txt'
+
+    with open(file_path, 'w') as file:
+        for url in github_urls:
+            file.write(url + '\n')
