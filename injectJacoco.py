@@ -28,6 +28,19 @@ def add_jacoco_configuration(pom_file):
     tree = ET.parse(pom_file)
     root = tree.getroot()
 
+    # Check if the build section exists
+    build = root.find("build")
+    if build is None:
+        # If not, create the build section
+        build = ET.Element("build")
+        root.append(build)
+
+    # Check if the plugins section exists within the build section
+    plugins = build.find("plugins")
+    if plugins is None:
+        # If not, create the plugins section within the build section
+        plugins = ET.SubElement(build, "plugins")
+
     # Define JaCoCo plugin configuration
     jacoco_plugin = ET.Element("plugin")
     jacoco_plugin_groupId = ET.SubElement(jacoco_plugin, "groupId")
@@ -35,7 +48,7 @@ def add_jacoco_configuration(pom_file):
     jacoco_plugin_artifactId = ET.SubElement(jacoco_plugin, "artifactId")
     jacoco_plugin_artifactId.text = "jacoco-maven-plugin"
     jacoco_plugin_version = ET.SubElement(jacoco_plugin, "version")
-    jacoco_plugin_version.text = "0.8.11"  # Use the latest version
+    jacoco_plugin_version.text = "0.8.7"  # Use the latest version
 
     # Add executions element
     executions = ET.SubElement(jacoco_plugin, "executions")
@@ -55,18 +68,6 @@ def add_jacoco_configuration(pom_file):
     report_goals = ET.SubElement(report_execution, "goals")
     report_goal = ET.SubElement(report_goals, "goal")
     report_goal.text = "report"
-
-    # Find the build section or create one if it doesn't exist
-    build = root.find(".//build")
-    if build is None:
-        print("Could not find build section")
-        build = ET.SubElement(root, "build")
-
-    # Find the plugins section or create one if it doesn't exist
-    plugins = build.find(".//plugins")
-    if plugins is None:
-        print("Could not find plugins section")
-        plugins = ET.SubElement(build, "plugins")
 
     # Add JaCoCo plugin configuration to the plugins section
     plugins.append(jacoco_plugin)
