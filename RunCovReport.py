@@ -8,7 +8,7 @@ def clone_repository(url):
 
 # Function to run injectJacoco.py
 def run_inject_jacoco():
-    subprocess.run(['python', 'injectJacoco.py', './gitDir/pom.xml'])
+    subprocess.run(['python3', 'injectJacoco.py', './gitDir/pom.xml'])
 
 # Function to run sudo mvn clean test -Dmaven.test.failure.ignore=true
 def run_maven_tests():
@@ -17,7 +17,7 @@ def run_maven_tests():
     os.chdir("..")
 # Function to run summarizeCoverage.py
 def run_summarize_coverage():
-    subprocess.run(['python', 'summarizeCoverage.py', './gitDir/'])
+    subprocess.run(['python3', 'summarizeCoverage.py', './gitDir/'])
 
 # Read X (number of URLs) from command line arguments
 if len(sys.argv) != 3:
