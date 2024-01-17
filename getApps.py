@@ -43,4 +43,4 @@ if __name__ == "__main__":
 
     with open(file_path, 'w') as file:
         for url in github_urls:
-            file.write(url + '\n')
+            file.write(url[0] + '\n')
