@@ -4,7 +4,10 @@ import os
 # Function to clone the repository from GitHub
 def clone_repository(url):
     subprocess.run(['mkdir', 'gitDir'])
-    subprocess.run(['git', 'clone', url, 'gitDir'])
+    try:
+        subprocess.run(['git', 'clone', url, 'gitDir'], check=True, timeout=300)
+    except subprocess.CalledProcessError or subprocess.TimeoutExpired:
+        cleanup_on_fail(url)
 
 # Function to run injectJacoco.py
 def run_inject_jacoco():
@@ -14,8 +17,8 @@ def run_inject_jacoco():
 def run_maven_tests(url):
     os.chdir("gitDir")
     try:
-        subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true', '-Drat.failOnError=false'], check=True)
-    except subprocess.CalledProcessError:
+        subprocess.run(['sudo', 'mvn', 'clean', 'test', '-Dmaven.test.failure.ignore=true', '-Drat.failOnError=false'], check=True, timeout=300)
+    except subprocess.CalledProcessError or subprocess.TimeoutExpired:
         # Call cleanup function on error
         cleanup_on_fail(url)
         raise
@@ -23,8 +26,8 @@ def run_maven_tests(url):
         # Change back to the original working directory
         os.chdir('..')
 # Function to run summarizeCoverage.py
-def run_summarize_coverage():
-    subprocess.run(['python3', 'summarizeCoverage.py', './gitDir/'])
+def run_summarize_coverage(url):
+    subprocess.run(['python3', 'summarizeCoverage.py', './gitDir/', url])
 
 def cleanup_on_fail(url):
     with open("ErrorReport.txt", 'a') as file:
@@ -59,7 +62,7 @@ for url in urls[:x]:
         clone_repository(url)
         run_inject_jacoco()
         run_maven_tests(url)
-        run_summarize_coverage()
+        run_summarize_coverage(url)
         cleanup()
     except Exception as e:
         cleanup_on_fail(url)

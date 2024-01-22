@@ -22,11 +22,11 @@ def get_line_coverage_percentage(jacoco_xml_file):
     return line_coverage_percentage
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py path/to/root/")
+    if len(sys.argv) != 3:
+        print("Usage: python script.py path/to/root/   githubURL")
         sys.exit(1)
     jacoco_xml_path = sys.argv[1] + "target/site/jacoco/jacoco.xml"# Replace with the actual path to your jacoco.xml
     line_coverage_percentage = get_line_coverage_percentage(jacoco_xml_path)
     with open("CovReport.txt", 'a') as file:
-        file.write(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%\n")
+        file.write(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%\n for {sys.argv[2]}")
     print(f"Line Coverage Percentage: {line_coverage_percentage:.2f}%")
